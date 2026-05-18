@@ -19,7 +19,7 @@ def process_transcript(transcript: str) -> str:
         except Exception:
             api_key_str = None
             
-    if not api_key_str or api_key_str == "your_api_key_here":
+    if not api_key_str or api_key_str == "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":
         raise ValueError("Invalid Groq API Key. Please update your .env file or Streamlit Secrets.")
         
     api_keys = [k.strip() for k in api_key_str.split(",") if k.strip()]
