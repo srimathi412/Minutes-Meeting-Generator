@@ -1,0 +1,10 @@
+streamlit
+openai-whisper
+langchain
+langchain-groq
+python-dotenv
+fpdf
+pydub
+ffmpeg-python
+audioop-lts
+static-ffmpeg
