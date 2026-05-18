@@ -26,6 +26,7 @@ def split_audio(audio_path):
     size_limit = 20 * 1024 * 1024 # 20MB limit
     
     try:
+        # pyrefly: ignore [missing-import]
         from pydub.utils import which
         if not which("ffmpeg") and not which("ffmpeg.exe"):
             raise FFmpegMissingException("FFmpeg is not available. Please install FFmpeg.")
@@ -63,6 +64,7 @@ def transcribe_audio(audio_file_path, progress_callback=None):
     """Transcribes audio using Groq's Whisper API.
     Supports comma-separated GROQ_API_KEYS for automatic key rotation to bypass rate limits.
     """
+    # pyrefly: ignore [missing-import]
     import streamlit as st
     api_key_str = os.environ.get("GROQ_API_KEY")
     if not api_key_str:
@@ -71,7 +73,7 @@ def transcribe_audio(audio_file_path, progress_callback=None):
         except Exception:
             api_key_str = None
             
-    if not api_key_str or api_key_str == "your_api_key_here":
+    if not api_key_str or api_key_str == "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":
         raise ValueError("Invalid Groq API Key. Please update your .env file or Streamlit Secrets.")
         
     api_keys = [k.strip() for k in api_key_str.split(",") if k.strip()]
@@ -220,3 +222,4 @@ def _transcribe_file_directly(client, file_path):
           language="en"
         )
     return transcription
+
