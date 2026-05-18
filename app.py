@@ -8,9 +8,8 @@ from speech_module import transcribe_audio, FFmpegMissingException
 from llm_processor import process_transcript, parse_llm_output
 from pdf_generator import generate_pdf
 
-# Load environment variables (override allows dynamic hot-swapping of .env variables, using absolute path logic)
-env_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '.env')
-load_dotenv(dotenv_path=env_path, override=True)
+# Load environment variables (override allows dynamic hot-swapping of .env variables)
+load_dotenv(override=True)
 
 st.set_page_config(page_title="MinuteMind AI", page_icon="🎙️", layout="wide")
 
@@ -160,8 +159,15 @@ st.markdown('<div class="title-gradient">🎙&nbsp; MinuteMind AI</div>', unsafe
 st.markdown('<div class="subtitle-desc">Transform your meeting audio into high-fidelity notes and summaries instantly</div>', unsafe_allow_html=True)
 
 # Check for API Key
-if not os.environ.get("GROQ_API_KEY") or os.environ.get("GROQ_API_KEY") == "your_api_key_here":
-    st.error("Please configure your Groq API Key in the `.env` file to continue.")
+api_key = os.environ.get("GROQ_API_KEY")
+if not api_key:
+    try:
+        api_key = st.secrets["GROQ_API_KEY"]
+    except Exception:
+        api_key = None
+
+if not api_key or api_key == "your_api_key_here":
+    st.error("Please configure your Groq API Key in the `.env` file or Streamlit Secrets to continue.")
     st.stop()
 
 uploaded_file = st.file_uploader("", type=['mp3', 'wav'])
