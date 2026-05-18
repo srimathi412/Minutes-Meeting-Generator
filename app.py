@@ -166,7 +166,7 @@ if not api_key:
     except Exception:
         api_key = None
 
-if not api_key or api_key == "your_api_key_here":
+if not api_key or api_key == "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":
     st.error("Please configure your Groq API Key in the `.env` file or Streamlit Secrets to continue.")
     st.stop()
 
