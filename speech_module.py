@@ -6,12 +6,7 @@ from groq import Groq, RateLimitError
 from dotenv import load_dotenv
 from pydub import AudioSegment
 
-# Dynamically load static FFmpeg binaries on import
-try:
-    import static_ffmpeg
-    static_ffmpeg.add_paths()
-except ImportError:
-    pass
+# System FFmpeg is expected to be available
 
 env_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '.env')
 load_dotenv(dotenv_path=env_path, override=True)
@@ -29,15 +24,16 @@ def split_audio(audio_path):
     size_limit = 20 * 1024 * 1024 # 20MB limit
     
     try:
+        from pydub.utils import which
+        if not which("ffmpeg") and not which("ffmpeg.exe"):
+            raise FFmpegMissingException("FFmpeg is not available. Please install FFmpeg.")
+    except Exception:
+        raise FFmpegMissingException("FFmpeg is not available. Please install FFmpeg.")
+        
+    try:
         audio = AudioSegment.from_file(audio_path)
     except Exception as e:
-        err_msg = str(e).lower()
-        if "ffmpeg" in err_msg or "ffprobe" in err_msg or "no such file or directory" in err_msg:
-            raise FFmpegMissingException(
-                "FFmpeg is required to process and split audio files, but it was not found on your system."
-            )
-        else:
-            raise Exception(f"Failed to read audio file: {str(e)}")
+        raise Exception(f"Failed to read audio file: {str(e)}")
             
     duration_ms = len(audio)
     duration_mins = duration_ms / (1000 * 60)
