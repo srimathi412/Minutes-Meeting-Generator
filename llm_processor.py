@@ -10,9 +10,17 @@ load_dotenv(dotenv_path=env_path, override=True)
 
 def process_transcript(transcript: str) -> str:
     """Processes the transcript using LangChain and Groq LLM."""
+    # pyrefly: ignore [missing-import]
+    import streamlit as st
     api_key_str = os.environ.get("GROQ_API_KEY")
+    if not api_key_str:
+        try:
+            api_key_str = st.secrets["GROQ_API_KEY"]
+        except Exception:
+            api_key_str = None
+            
     if not api_key_str or api_key_str == "your_api_key_here":
-        raise ValueError("Invalid Groq API Key. Please update your .env file.")
+        raise ValueError("Invalid Groq API Key. Please update your .env file or Streamlit Secrets.")
         
     api_keys = [k.strip() for k in api_key_str.split(",") if k.strip()]
     if not api_keys:
@@ -103,3 +111,4 @@ def parse_llm_output(llm_output: str):
         sections[k] = sections[k].strip()
         
     return sections
+
